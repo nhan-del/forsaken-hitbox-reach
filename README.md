@@ -1,27 +1,56 @@
-# forsaken-hitbox-reach
-Reach 20 hitbox
-public class Forsaken {
-    public static void main(String[] args) {
-        // Create a hitbox with default size
-        Hitbox hitbox = new Hitbox();
-        hitbox.setSize(20);
-        System.out.println("Hitbox size set to: " + hitbox.getSize());
-    }
-}
+-- Fake Lag Script cho Mobile Executor (Roblox)
+-- Tác giả: Ai 
 
-// Simple Hitbox class for demonstration
-class Hitbox {
-    private int size;
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
 
-    public Hitbox() {
-        this.size = 0;
-    }
+local fakeLag = false
+local delayTime = 2     -- thời gian "lag" (giây)
+local updateTime = 0.1  -- thời gian cập nhật vị trí (giây)
 
-    public void setSize(int size) {
-        this.size = size;
-    }
+-- Tạo nút GUI để bật/tắt Fake Lag
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
 
-    public int getSize() {
-        return size;
-    }
-}
+local Button = Instance.new("TextButton")
+Button.Size = UDim2.new(0, 120, 0, 40)
+Button.Position = UDim2.new(0.5, -60, 0.7, 0)
+Button.Text = "Fake Lag: OFF"
+Button.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+Button.TextColor3 = Color3.new(1, 1, 1)
+Button.Parent = ScreenGui
+Button.Active = true
+Button.Draggable = true
+
+function startFakeLag()
+    fakeLag = true
+    Button.Text = "Fake Lag: ON"
+    Button.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
+    local lastPos = hrp.Position
+    while fakeLag do
+        lastPos = hrp.Position
+        hrp.Anchored = true
+        wait(delayTime)
+        hrp.Anchored = false
+        hrp.CFrame = CFrame.new(lastPos)
+        wait(updateTime)
+    end
+end
+
+function stopFakeLag()
+    fakeLag = false
+    Button.Text = "Fake Lag: OFF"
+    Button.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+    hrp.Anchored = false
+end
+
+Button.MouseButton1Click:Connect(function()
+    if not fakeLag then
+        startFakeLag()
+    else
+        stopFakeLag()
+    end
+end)
+
+print("Đã tải Fake Lag Script cho mobile. Nhấn nút trên màn hình để bật/tắt.")
