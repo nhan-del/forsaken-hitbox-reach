@@ -1,0 +1,93 @@
+-- NOX SCRIPT menu, nhấn hiện/tắt Fake Lag Button
+
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+
+local fakeLag = false
+local delayTime = 1
+local updateTime = 0.1
+
+-- Tạo ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
+
+-- Tạo menu giống hình
+local Menu = Instance.new("Frame")
+Menu.Size = UDim2.new(0, 150, 0, 120)
+Menu.Position = UDim2.new(0.5, -75, 0.5, -60)
+Menu.BackgroundColor3 = Color3.fromRGB(255,255,255)
+Menu.BorderSizePixel = 3
+Menu.BorderColor3 = Color3.fromRGB(0,0,0)
+Menu.Parent = ScreenGui
+Menu.Active = true
+Menu.Draggable = true
+Menu.Name = "NoxMenu"
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0,18)
+UICorner.Parent = Menu
+
+local Title = Instance.new("TextLabel")
+Title.Parent = Menu
+Title.Size = UDim2.new(1,0,1,0)
+Title.Position = UDim2.new(0,0,0,0)
+Title.BackgroundTransparency = 1
+Title.Text = "NOX\nSCRIPT"
+Title.TextColor3 = Color3.fromRGB(0,180,255)
+Title.Font = Enum.Font.SourceSansItalic
+Title.TextScaled = true
+Title.TextWrapped = true
+
+-- Fake Lag Button (ẩn ban đầu)
+local Button = Instance.new("TextButton")
+Button.Size = UDim2.new(0, 120, 0, 40)
+Button.Position = UDim2.new(0.5, -60, 1, -45)
+Button.Text = "Fake Lag: OFF"
+Button.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+Button.TextColor3 = Color3.new(1, 1, 1)
+Button.Parent = Menu
+Button.Visible = false
+Button.Active = true
+Button.Draggable = false
+
+function startFakeLag()
+    fakeLag = true
+    Button.Text = "Fake Lag: ON"
+    Button.BackgroundColor3 = Color3.fromRGB(80, 200, 120)
+    local lastPos = hrp.Position
+    while fakeLag do
+        lastPos = hrp.Position
+        hrp.Anchored = true
+        wait(delayTime)
+        hrp.Anchored = false
+        hrp.CFrame = CFrame.new(lastPos)
+        wait(updateTime)
+    end
+end
+
+function stopFakeLag()
+    fakeLag = false
+    Button.Text = "Fake Lag: OFF"
+    Button.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+    hrp.Anchored = false
+end
+
+Button.MouseButton1Click:Connect(function()
+    if not fakeLag then
+        startFakeLag()
+    else
+        stopFakeLag()
+    end
+end)
+
+-- Xử lý nhấn vào menu: Hiện/ẩn Button Fake Lag
+local guiVisible = false
+Menu.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        guiVisible = not guiVisible
+        Button.Visible = guiVisible
+    end
+end)
+
+print("NOX SCRIPT menu đã tạo. Nhấn vào menu để hiện/tắt nút Fake Lag.")
